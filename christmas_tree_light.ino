@@ -9,6 +9,7 @@ CRGBArray<NUM_LEDS> leds; //Defining the array of the LEDs;
 #define PATTERN1_MODE 3
 #define PATTERN2_MODE 4
 #define PATTERN3_MODE 5
+#define STRING_PARTY 6
 
 CRGB gBackgroundColor = CRGB::Black; // Black means turn LED off
 
@@ -23,7 +24,7 @@ void btn_pressed()
 // Main initial setup
 void setup() {
   FastLED.addLeds<WS2812B, STRING1_PIN>(leds, NUM_LEDS);  //Tell the FastLED library that we are using WS2812B LEDs
-  FastLED.setBrightness(250); //The max brightness value is 255
+  FastLED.setBrightness(150); //The max brightness value is 255
   attachInterrupt(digitalPinToInterrupt(4), btn_pressed, FALLING); // When the user button is pressed change mode
 }
 
@@ -213,6 +214,27 @@ void pattern3(uint16_t speed)
   delay(300);
 }
 
+void string_party() {
+    for (int i = NUM_LEDS-1; i >= 0; i--) {
+      if (i < NUM_LEDS && i > NUM_LEDS-5) {
+        leds[i] = CRGB::Gold; 
+      }
+      if (i < NUM_LEDS-4 && i > NUM_LEDS-10) {
+        leds[i] = CRGB::Red;
+        leds[i-5] = CRGB::Blue;
+        leds[i-10] = CRGB(255, 0, 255);
+        leds[i-15] = CRGB(0, 255, 0);
+        delay(400);
+        FastLED.show();
+      }
+    }
+    for (int c = 0; c < NUM_LEDS -4; c++) {
+      leds[c] = CRGB(255, 255, 255);
+      FastLED.show();
+      delay(500);
+    }
+}
+
 // Main loop
 void loop() { 
   switch(currentMode) {
@@ -233,6 +255,9 @@ void loop() {
       break;
     case PATTERN3_MODE:
       pattern3(300);
+      break;
+    case STRING_PARTY:
+      string_party();
       break;
     default:
        currentMode = POSITION_COLORS;
